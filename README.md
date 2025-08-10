@@ -117,13 +117,51 @@ SecureFile es una aplicación web moderna y segura que permite encriptar y desen
 ### 1. Generación y Validación de Clave
 - El usuario puede generar una clave segura automáticamente o ingresar una propia. La clave debe tener al menos 12 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales. El sistema valida la fortaleza de la clave y da feedback en tiempo real.
 
-### 2. Proceso de Encriptado
-1. **Lectura del archivo**: Se lee el archivo como un ArrayBuffer para trabajar a nivel binario.
-2. **Generación de salt único**: Se crea un salt único para cada archivo usando SHA-256 sobre una combinación de una variable de entorno secreta, el nombre, tamaño y timestamp del archivo. Esto asegura que incluso con la misma clave, el resultado será diferente para cada archivo.
-3. **Derivación de clave segura**: Se utiliza PBKDF2 (Password-Based Key Derivation Function 2) con 10,000 iteraciones y el salt generado para derivar una clave criptográfica de 256 bits a partir de la clave del usuario. Esto dificulta ataques de fuerza bruta y rainbow tables.
-4. **Generación de IV aleatorio**: Se genera un vector de inicialización (IV) aleatorio de 128 bits para cada archivo, reforzando la seguridad del cifrado en modo CBC.
-5. **Encriptado con AES-256-CBC**: El contenido binario del archivo se cifra usando AES-256 en modo CBC, con padding PKCS7, la clave derivada y el IV generado.
-6. **Empaquetado seguro**: El resultado se empaqueta junto con el salt, IV, metadatos originales, timestamp, tipo MIME y una firma digital Allpasoft. Todo el paquete se codifica en Base64 para facilitar su almacenamiento y transferencia.
+
+### 2. Proceso de Encriptado (Explicación para Todos)
+
+El proceso de encriptado está pensado para ser seguro, pero también fácil de entender. Aquí te lo explicamos paso a paso, con ejemplos y un diagrama visual:
+
+#### 📝 Paso a Paso
+1. **Seleccionas tu archivo**
+   - Puede ser cualquier tipo de archivo: foto, PDF, documento, etc.
+2. **Eliges o generas una clave secreta**
+   - Es como una contraseña. Solo quien tenga esta clave podrá recuperar el archivo original.
+3. **La app mezcla tu clave con datos únicos del archivo**
+   - Así, aunque uses la misma clave en dos archivos distintos, el resultado será diferente.
+4. **Se crea una "clave especial" solo para este archivo**
+   - Usando técnicas avanzadas (PBKDF2 y salt), la app transforma tu clave en una clave súper segura.
+5. **El archivo se convierte en "datos secretos"**
+   - Se usa un método llamado AES-256, que es el estándar de seguridad usado por bancos y gobiernos.
+6. **Se guarda todo en un paquete seguro**
+   - El archivo encriptado incluye información para poder desencriptarlo después (pero nunca tu clave), y una firma digital que garantiza que fue creado por esta app.
+7. **Descargas el archivo encriptado**
+   - El archivo resultante tiene la extensión `.encrypted` y solo puede ser abierto con la clave correcta.
+
+#### 📊 Diagrama del Proceso
+
+```mermaid
+flowchart LR
+    A[Selecciona tu archivo] --> B[Elige o genera clave secreta]
+    B --> C[Mezcla clave + datos únicos (salt)]
+    C --> D[Deriva clave segura (PBKDF2)]
+    D --> E[Encripta archivo (AES-256)]
+    E --> F[Empaqueta datos + firma]
+    F --> G[Descarga archivo .encrypted]
+```
+
+#### 💡 Ejemplo de Uso
+
+1. Subes una foto llamada `vacaciones.jpg`.
+2. Escribes la clave: `MiClaveSuperSecreta2025!`
+3. Haces clic en "Encriptar y Descargar".
+4. Descargas un archivo llamado `vacaciones.jpg.encrypted`.
+5. Solo tú (o quien tenga la clave) podrá recuperar la foto original usando la app.
+
+#### 🔒 ¿Por qué es seguro?
+- Nadie puede adivinar tu clave ni desencriptar el archivo sin ella.
+- Aunque alguien intercepte el archivo `.encrypted`, no podrá abrirlo sin la clave.
+- Cada archivo tiene una protección única, incluso si usas la misma clave varias veces.
 
 ### 3. Proceso de Desencriptado
 1. **Lectura y decodificación**: El archivo `.encrypted` se lee y decodifica desde Base64, extrayendo el paquete seguro.
