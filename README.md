@@ -142,12 +142,12 @@ El proceso de encriptado está pensado para ser seguro, pero también fácil de 
 
 ```mermaid
 flowchart LR
-    A[Selecciona tu archivo] --> B[Elige o genera clave secreta]
-    B --> C[Mezcla clave + datos únicos (salt)]
-    C --> D[Deriva clave segura (PBKDF2)]
-    D --> E[Encripta archivo (AES-256)]
-    E --> F[Empaqueta datos + firma]
-    F --> G[Descarga archivo .encrypted]
+   A[Selecciona tu archivo] --> B[Elige o genera clave secreta]
+   B --> C[Mezcla clave y datos unicos]
+   C --> D[Deriva clave segura PBKDF2]
+   D --> E[Encripta archivo AES-256]
+   E --> F[Empaqueta datos y firma]
+   F --> G[Descarga archivo encrypted]
 ```
 
 #### 💡 Ejemplo de Uso
