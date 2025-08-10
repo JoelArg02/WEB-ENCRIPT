@@ -49,7 +49,6 @@ export default function Home() {
     });
 
     try {
-      // Simular progreso
       setProcessingState(prev => ({ ...prev, progress: 30, message: 'Procesando archivo...' }));
       
       const result = await encryptFile(selectedFile, userKey);

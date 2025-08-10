@@ -8,7 +8,6 @@ const ALLPASOFT_SIGNATURE: AllpasoftSignature = {
   signature: 'Made with 💚 by Allpasoft - Secure File Encryption'
 };
 
-// Generar una clave segura sugerida
 export const generateSecureKey = (): string => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
   let result = '';
