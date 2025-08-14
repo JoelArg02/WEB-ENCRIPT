@@ -23,8 +23,10 @@ export default function FileDropZone({
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('[Upload] dragenter');
     setDragCounter(prev => prev + 1);
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      console.log('[Upload] items detectados en dragenter:', e.dataTransfer.items.length);
       setIsDragOver(true);
     }
   }, []);
@@ -32,6 +34,7 @@ export default function FileDropZone({
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('[Upload] dragleave');
     setDragCounter(prev => prev - 1);
     if (dragCounter <= 1) {
       setIsDragOver(false);
@@ -41,33 +44,56 @@ export default function FileDropZone({
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isDragOver) console.log('[Upload] dragover');
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('[Upload] drop');
     setIsDragOver(false);
     setDragCounter(0);
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       const file = files[0];
+      console.log('[Upload] archivo soltado:', {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
       if (file.size > maxSize * 1024 * 1024) {
         alert(`El archivo es demasiado grande. Tamaño máximo: ${maxSize}MB`);
+        console.warn('[Upload] archivo excede tamaño máximo permitido', {
+          size: file.size,
+          maxBytes: maxSize * 1024 * 1024
+        });
         return;
       }
+      console.log('[Upload] archivo aceptado y enviado a onFileSelect');
       onFileSelect(file);
     }
   }, [maxSize, onFileSelect]);
 
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('[Upload] selección manual de archivo (input[type=file])');
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
+      console.log('[Upload] archivo seleccionado:', {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
       if (file.size > maxSize * 1024 * 1024) {
         alert(`El archivo es demasiado grande. Tamaño máximo: ${maxSize}MB`);
+        console.warn('[Upload] archivo excede tamaño máximo permitido', {
+          size: file.size,
+          maxBytes: maxSize * 1024 * 1024
+        });
         return;
       }
+      console.log('[Upload] archivo aceptado y enviado a onFileSelect');
       onFileSelect(file);
     }
   }, [maxSize, onFileSelect]);

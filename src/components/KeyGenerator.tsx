@@ -25,6 +25,7 @@ export default function KeyGenerator({ value, onChange, placeholder = "Ingresa t
   }, [value]);
 
   const generateKey = () => {
+  console.log('[Key] Solicitud de generación de clave');
     const newKey = generateSecureKey();
     onChange(newKey);
     // Animación suave al generar
@@ -34,11 +35,12 @@ export default function KeyGenerator({ value, onChange, placeholder = "Ingresa t
 
   const copyToClipboard = async () => {
     try {
+  console.log('[Key] Copiando clave al portapapeles');
       await navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Error al copiar:', error);
+  console.error('[Key] Error al copiar al portapapeles', error);
     }
   };
 

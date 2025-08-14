@@ -21,6 +21,7 @@ export default function Home() {
   });
 
   const handleFileSelect = (file: File) => {
+  console.log('[UI] Archivo seleccionado en Home:', { name: file.name, size: file.size, type: file.type });
     setSelectedFile(file);
     setProcessingState({
       isProcessing: false,
@@ -31,7 +32,9 @@ export default function Home() {
   };
 
   const handleEncrypt = async () => {
+    console.log('[UI] Click en Encriptar');
     if (!selectedFile || !userKey) {
+      console.warn('[UI] Encriptar: archivo o clave faltante', { hasFile: !!selectedFile, keyLength: userKey.length });
       setProcessingState({
         isProcessing: false,
         progress: 0,
@@ -47,16 +50,20 @@ export default function Home() {
       message: 'Iniciando encriptación...',
       type: 'encrypting'
     });
+    console.log('[UI] Estado: iniciando encriptación');
 
     try {
       setProcessingState(prev => ({ ...prev, progress: 30, message: 'Procesando archivo...' }));
+      console.log('[UI] Estado: procesando archivo');
       
       const result = await encryptFile(selectedFile, userKey);
+      console.log('[UI] Resultado de encryptFile:', { filename: result.filename, originalName: result.originalName, size: result.fileSize });
       
       setProcessingState(prev => ({ ...prev, progress: 80, message: 'Generando archivo encriptado...' }));
+      console.log('[UI] Estado: generando archivo encriptado');
       
-      // Descargar el archivo encriptado
       downloadFile(result.encryptedData, result.filename, 'text/plain');
+      console.log('[UI] Descarga de archivo encriptado iniciada');
       
       setProcessingState({
         isProcessing: false,
@@ -64,8 +71,8 @@ export default function Home() {
         message: '¡Archivo encriptado exitosamente!',
         type: 'success'
       });
+      console.log('[UI] Encriptación finalizada con éxito');
 
-      // Limpiar después de 3 segundos
       setTimeout(() => {
         setSelectedFile(null);
         setProcessingState({
@@ -74,9 +81,11 @@ export default function Home() {
           message: '',
           type: 'idle'
         });
+        console.log('[UI] Estado reseteado luego de encriptación');
       }, 3000);
 
     } catch (error) {
+      console.error('[UI] Error en encriptación', error);
       setProcessingState({
         isProcessing: false,
         progress: 0,
@@ -87,7 +96,9 @@ export default function Home() {
   };
 
   const handleDecrypt = async () => {
+    console.log('[UI] Click en Desencriptar');
     if (!selectedFile || !userKey) {
+      console.warn('[UI] Desencriptar: archivo o clave faltante', { hasFile: !!selectedFile, keyLength: userKey.length });
       setProcessingState({
         isProcessing: false,
         progress: 0,
@@ -103,16 +114,20 @@ export default function Home() {
       message: 'Iniciando desencriptación...',
       type: 'decrypting'
     });
+    console.log('[UI] Estado: iniciando desencriptación');
 
     try {
       setProcessingState(prev => ({ ...prev, progress: 30, message: 'Verificando archivo...' }));
+      console.log('[UI] Estado: verificando archivo');
       
       const result = await decryptFile(selectedFile, userKey);
+      console.log('[UI] Resultado de decryptFile:', { originalName: result.originalName, size: result.fileSize });
       
       setProcessingState(prev => ({ ...prev, progress: 80, message: 'Restaurando archivo original...' }));
+      console.log('[UI] Estado: restaurando archivo original');
       
-      // Descargar el archivo desencriptado
       downloadFile(result.decryptedData, result.originalName);
+      console.log('[UI] Descarga de archivo desencriptado iniciada');
       
       setProcessingState({
         isProcessing: false,
@@ -120,8 +135,8 @@ export default function Home() {
         message: '¡Archivo desencriptado exitosamente!',
         type: 'success'
       });
+      console.log('[UI] Desencriptación finalizada con éxito');
 
-      // Limpiar después de 3 segundos
       setTimeout(() => {
         setSelectedFile(null);
         setProcessingState({
@@ -130,9 +145,11 @@ export default function Home() {
           message: '',
           type: 'idle'
         });
+        console.log('[UI] Estado reseteado luego de desencriptación');
       }, 3000);
 
     } catch (error) {
+      console.error('[UI] Error en desencriptación', error);
       setProcessingState({
         isProcessing: false,
         progress: 0,
@@ -391,7 +408,7 @@ export default function Home() {
       >
         <div className="max-w-4xl mx-auto">
           <p className="text-sm">
-            © 2024 Allpasoft. Todos los derechos reservados. 
+            © 2025 Allpasoft. Todos los derechos reservados. 
             <span className="mx-2">•</span>
             SecureFile v1.0.0
             <span className="mx-2">•</span>
